@@ -180,7 +180,7 @@ def sdpsolver(U,w,num):
     for i in range(n):
         data = U[i,:]
         inner = w @ data
-        matrix = cp.kron(data.reshape(-1,1), data.reshape(1,-1))
+        matrix = cp.kron(cp.reshape(data,(m,1)), cp.reshape(data,(1,m)))
         S += a[i]*(cp.exp(inner)/((1+cp.exp(inner))**2))*matrix
         
     cost = 0
