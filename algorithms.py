@@ -176,6 +176,7 @@ def sdpsolver(U,w,num):
     m = U.shape[1]
     a = cp.Variable(n)
     S = np.zeros([m,m])
+    S = cp.reshape(S,(m,m))
     
     for i in range(n):
         data = U[i,:]
