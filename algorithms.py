@@ -10,6 +10,7 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 from dataprocessing import importDataSet
 import cvxpy as cp
+import mosek
 import random
 from numpy.linalg import norm 
 
@@ -169,26 +170,31 @@ def maxmodelchange(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
 
 
 def sdpsolver(U,w,num):
+    print("Number of samples: ",num)
     n = len(U)
+    print(n)
     m = U.shape[1]
     a = cp.Variable(n)
     S = np.zeros([m,m])
     
-    for i in range(m):
+    for i in range(n):
         data = U[i,:]
         inner = w @ data
         S += a[i]*(np.exp(inner)/((1+np.exp(inner))**2))*np.outer(data,data)
         
     cost = 0
     
-    for i in range(m):
+    for i in range(n):
         data = U[i,:]
         inner = w @ data
-        cost += (np.exp(inner)/((1+np.exp(inner))**2))/n*cp.matrix_frac(data,S)
+        cost += (np.exp(inner)/((1+np.exp(inner))**2))*cp.matrix_frac(data,S)
         
     constraints = [0 <= a, a <= 1, cp.sum(a) == num]
     prob = cp.Problem(cp.Minimize(cost),constraints)
-    prob.solve(solver="SCS")
+    prob.solve(solver="MOSEK", verbose=True, mosek_params = {mosek.dparam.intpnt_co_tol_near_rel:  1e+5})
+    
+    print(np.sum(a.value))
+    print(prob.status)
     
     return a.value/n
     
@@ -242,7 +248,15 @@ def uniformrandom(L, Ly, U, Uy, num, X_test, y_test):
     print("accuracy: ", performance[1])
     
     return performance
-    
+
+'''
+m = 100
+n = 15
+U = np.random.rand(m,n)
+w = np.random.rand(n)
+
+sdpsolver(U,w,30)
+'''
     
     
     

@@ -48,7 +48,7 @@ def experiments(name, maxiter, initsize, k, lammy):
 def experimentsbatch(name, num, initsize, k):
     
     X, y = importDataSet(name, "standardization")
-    kf = KFold(n_splits=k)
+    kf = KFold(n_splits=k, shuffle=True)
     performance = np.zeros([2, k, 2])
     foldindex = 0
     
@@ -58,10 +58,10 @@ def experimentsbatch(name, num, initsize, k):
         y_train , y_test = y[train_index], y[test_index]
         
         L, Ly = X_train[:initsize,:], y_train[:initsize]
-        U, Uy = X_train[initsize:,:], y_train[initsize:]
+        U, Uy = X_train, y_train
         
-        #performance[0, foldindex, :] = varianceReduction(L, Ly, U, Uy, num, U, Uy)
-        performance[1, foldindex, :] = uniformrandom(L, Ly, U, Uy, num, X_test, y_test)
+        performance[0, foldindex, :] = varianceReduction(L, Ly, U, Uy, num, U, Uy)
+        performance[1, foldindex, :] = uniformrandom(L, Ly, U, Uy, num, U, Uy)
         
         foldindex += 1
         
@@ -80,5 +80,5 @@ def graphplotter(performance):
     
 
     
-performance = experimentsbatch("australian.dat", 50, 20, 2)
+performance = experimentsbatch("australian.dat", 300, 30, 2)
 print(performance)
