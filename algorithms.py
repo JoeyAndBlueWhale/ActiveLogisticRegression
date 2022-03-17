@@ -180,14 +180,15 @@ def sdpsolver(U,w,num):
     for i in range(n):
         data = U[i,:]
         inner = w @ data
-        S += a[i]*(np.exp(inner)/((1+np.exp(inner))**2))*np.outer(data,data)
+        matrix = np.outer(data,data)
+        S += a[i]*(cp.exp(inner)/((1+cp.exp(inner))**2))*matrix
         
     cost = 0
     
     for i in range(n):
         data = U[i,:]
         inner = w @ data
-        cost += (np.exp(inner)/((1+np.exp(inner))**2))*cp.matrix_frac(data,S)
+        cost += (cp.exp(inner)/((1+cp.exp(inner))**2))*cp.matrix_frac(data,S)
         
     constraints = [0 <= a, a <= 1, cp.sum(a) == num]
     prob = cp.Problem(cp.Minimize(cost),constraints)
