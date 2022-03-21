@@ -8,6 +8,7 @@ Created on Wed Mar  2 22:48:57 2022
 
 import numpy as np
 from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import SGDClassifier
 from dataprocessing import importDataSet
 import cvxpy as cp
 import mosek
@@ -42,7 +43,7 @@ def maxentropy(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
     return performance
 
 def maxerrorreduction(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
-    classifier = LogisticRegression(C=1/lammy)
+    classifier = SGDClassifier(loss='log', alpha=lammy, n_jobs=-1)
     classifier.fit(L, Ly)
     performance = np.zeros(maxiter+1)
     pred = classifier.predict(X_test)
