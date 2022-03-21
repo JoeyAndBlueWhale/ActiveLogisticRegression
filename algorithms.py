@@ -16,7 +16,7 @@ import random
 from numpy.linalg import norm 
 
 def maxentropy(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
-    classifier = LogisticRegression(C=1/lammy)
+    classifier = SGDClassifier(loss='log', alpha=lammy, n_jobs=-1)
     classifier.fit(L, Ly)
     performance = np.zeros(maxiter+1)
     pred = classifier.predict(X_test)
@@ -94,7 +94,7 @@ def maxerrorreduction(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
     return performance
 
 def minlossincrease(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
-    classifier = LogisticRegression(C=1/lammy)
+    classifier = SGDClassifier(loss='log', alpha=lammy, n_jobs=-1)
     classifier.fit(L, Ly)
     performance = np.zeros(maxiter+1)
     pred = classifier.predict(X_test)
@@ -142,7 +142,7 @@ def minlossincrease(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
     return performance
 
 def maxmodelchange(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
-    classifier = LogisticRegression(C=1/lammy)
+    classifier = SGDClassifier(loss='log', alpha=lammy, n_jobs=-1)
     classifier.fit(L, Ly)
     performance = np.zeros(maxiter+1)
     pred = classifier.predict(X_test)
