@@ -194,7 +194,7 @@ def sdpsolver(U,w,num):
     constraints = [0 <= a, a <= 1, cp.sum(a) == num]
     prob = cp.Problem(cp.Minimize(cost),constraints)
     #prob.solve(solver="MOSEK", verbose=True, mosek_params = {mosek.dparam.intpnt_co_tol_near_rel:  1e+5})
-    prob.solve(solver="SCS")
+    prob.solve(solver="CVXOPT", verbose=True)
     
     print(np.sum(a.value))
     print(prob.status)
@@ -251,15 +251,6 @@ def uniformrandom(L, Ly, U, Uy, num, X_test, y_test):
     print("accuracy: ", performance[1])
     
     return performance
-
-'''
-m = 100
-n = 15
-U = np.random.rand(m,n)
-w = np.random.rand(n)
-
-sdpsolver(U,w,30)
-'''
     
     
     

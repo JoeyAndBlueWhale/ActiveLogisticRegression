@@ -80,5 +80,6 @@ def graphplotter(performance):
     
 
     
-performance = experimentsbatch("australian.dat", 600, 30, 10)
-print(performance)
+#performance = experimentsbatch("australian.dat", 50, 30, 2)
+performance = experiments("australian.dat", 600, 4, 10, 0.01)
+graphplotter(performance)
