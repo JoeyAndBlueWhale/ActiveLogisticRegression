@@ -15,7 +15,7 @@ import random
 from numpy.linalg import norm 
 
 def maxentropy(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
-    classifier = LogisticRegression(C=1/lammy, n_jobs=-1)
+    classifier = LogisticRegression(C=1/lammy)
     classifier.fit(L, Ly)
     performance = np.zeros(maxiter+1)
     pred = classifier.predict(X_test)
@@ -42,7 +42,7 @@ def maxentropy(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
     return performance
 
 def maxerrorreduction(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
-    classifier = LogisticRegression(C=1/lammy, n_jobs=-1)
+    classifier = LogisticRegression(C=1/lammy)
     classifier.fit(L, Ly)
     performance = np.zeros(maxiter+1)
     pred = classifier.predict(X_test)
@@ -93,7 +93,7 @@ def maxerrorreduction(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
     return performance
 
 def minlossincrease(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
-    classifier = LogisticRegression(C=1/lammy, n_jobs=-1)
+    classifier = LogisticRegression(C=1/lammy)
     classifier.fit(L, Ly)
     performance = np.zeros(maxiter+1)
     pred = classifier.predict(X_test)
@@ -141,7 +141,7 @@ def minlossincrease(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
     return performance
 
 def maxmodelchange(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
-    classifier = LogisticRegression(C=1/lammy, n_jobs=-1)
+    classifier = LogisticRegression(C=1/lammy)
     classifier.fit(L, Ly)
     performance = np.zeros(maxiter+1)
     pred = classifier.predict(X_test)
@@ -202,7 +202,7 @@ def sdpsolver(U,w,num):
     return a.value/n
     
 def varianceReduction(L, Ly, U, Uy, num, X_test, y_test):
-    classifier = LogisticRegression(penalty='none', n_jobs=-1)
+    classifier = LogisticRegression(penalty='none')
     classifier.fit(L, Ly)
     performance = np.zeros(2)
     pred = classifier.predict(X_test)
@@ -231,7 +231,7 @@ def varianceReduction(L, Ly, U, Uy, num, X_test, y_test):
     return performance
 
 def uniformrandom(L, Ly, U, Uy, num, X_test, y_test):
-    classifier = LogisticRegression(penalty='none', n_jobs=-1)
+    classifier = LogisticRegression(penalty='none')
     classifier.fit(L, Ly)
     performance = np.zeros(2)
     pred = classifier.predict(X_test)
