@@ -20,7 +20,7 @@ from dataprocessing import importDataSet
 def experiments(name, maxiter, initsize, k, lammy):
     
     X, y = importDataSet(name, "standardization")
-    kf = KFold(n_splits=k, random_state=True)
+    kf = KFold(n_splits=k, shuffle=True)
     performance = np.zeros([4, k, maxiter+1])
     foldindex = 0
     
