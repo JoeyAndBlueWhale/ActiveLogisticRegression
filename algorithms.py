@@ -200,7 +200,7 @@ def sdpsolver(U,w,num):
     print(np.sum(a.value))
     print(prob.status)
     
-    return a.value/n
+    return a.value/num
     
 def varianceReduction(L, Ly, U, Uy, num, X_test, y_test):
     classifier = LogisticRegression(penalty='none')
