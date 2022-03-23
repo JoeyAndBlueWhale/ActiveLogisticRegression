@@ -76,10 +76,12 @@ def graphplotter(performance):
     plt.plot(x, performance[2,:], label="Min loss increase")
     plt.plot(x, performance[3,:], label="Max model change")
     plt.legend()
+    plt.savefig('plot')
     plt.show()
     
 
     
 #performance = experimentsbatch("australian.dat", 50, 30, 2)
-performance = experiments("australian.dat", 600, 4, 10, 0.01)
+#performance = experiments("australian.dat", 600, 4, 10, 0.01)
+performance = np.zeros([4,30])
 graphplotter(performance)
