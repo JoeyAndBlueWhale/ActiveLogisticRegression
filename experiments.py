@@ -20,32 +20,58 @@ from dataprocessing import importDataSet
 def experiments(name, maxiter, initsize, k, lammy):
     
     X, y = importDataSet(name, "standardization")
-    kf = KFold(n_splits=k, shuffle=True)
-    performance = np.zeros([4, k, maxiter+1])
-    foldindex = 0
     
-    for train_index , test_index in kf.split(X):
+    if k == 1 :
+        performance = np.zeros([4, maxiter+1])
         
-        X_train , X_test = X[train_index,:], X[test_index,:]
-        y_train , y_test = y[train_index], y[test_index]
-        
+        X_train , X_test = X, X
+        y_train , y_test = y, y
+    
         L, Ly = X_train[:initsize-1,:], y_train[:initsize-1]
         L = np.append(L, X_train[-1,:].reshape(1,-1), axis=0)
         Ly = np.append(Ly, y_train[-1])
         U, Uy = X_train[initsize-1:-1,:], y_train[initsize-1:-1]
         
-        performance[0, foldindex, :] = maxentropy(L, Ly, U, Uy, lammy, maxiter, X_test, y_test)
+        performance[0, :] = maxentropy(L, Ly, U, Uy, lammy, maxiter, X_test, y_test)
         print("Max entropy finished!")
-        performance[1, foldindex, :] = maxerrorreduction(L, Ly, U, Uy, lammy, maxiter, X_test, y_test)
+        performance[1, :] = maxerrorreduction(L, Ly, U, Uy, lammy, maxiter, X_test, y_test)
         print("Max error reduction finished!")
-        performance[2, foldindex, :] = minlossincrease(L, Ly, U, Uy, lammy, maxiter, X_test, y_test)
+        performance[2, :] = minlossincrease(L, Ly, U, Uy, lammy, maxiter, X_test, y_test)
         print("Min loss increase finished!")
-        performance[3, foldindex, :] = maxmodelchange(L, Ly, U, Uy, lammy, maxiter, X_test, y_test)
+        performance[3, :] = maxmodelchange(L, Ly, U, Uy, lammy, maxiter, X_test, y_test)
         print("Max model change finished!")
         
-        foldindex += 1
+        return performance
         
-    return np.sum(performance, axis=1)/k
+        
+    else:
+        
+        kf = KFold(n_splits=k, shuffle=True)
+        performance = np.zeros([4, k, maxiter+1])
+        foldindex = 0
+    
+        for train_index , test_index in kf.split(X):
+            
+            X_train , X_test = X[train_index,:], X[test_index,:]
+            y_train , y_test = y[train_index], y[test_index]
+        
+            L, Ly = X_train[:initsize-1,:], y_train[:initsize-1]
+            L = np.append(L, X_train[-1,:].reshape(1,-1), axis=0)
+            Ly = np.append(Ly, y_train[-1])
+            U, Uy = X_train[initsize-1:-1,:], y_train[initsize-1:-1]
+        
+            performance[0, foldindex, :] = maxentropy(L, Ly, U, Uy, lammy, maxiter, X_test, y_test)
+            print("Max entropy finished!")
+            performance[1, foldindex, :] = maxerrorreduction(L, Ly, U, Uy, lammy, maxiter, X_test, y_test)
+            print("Max error reduction finished!")
+            performance[2, foldindex, :] = minlossincrease(L, Ly, U, Uy, lammy, maxiter, X_test, y_test)
+            print("Min loss increase finished!")
+            performance[3, foldindex, :] = maxmodelchange(L, Ly, U, Uy, lammy, maxiter, X_test, y_test)
+            print("Max model change finished!")
+        
+            foldindex += 1
+        
+        return np.sum(performance, axis=1)/k
 
 def experimentsbatch(name, num, initsize, k):
     
@@ -84,5 +110,5 @@ def graphplotter(performance):
 
     
 #performance = experimentsbatch("australian.dat", 50, 30, 2)
-performance = experiments('', 2800, 4, 10, 0.01)
+performance = experiments('', 2800, 4, 1, 0.01)
 graphplotter(performance)
