@@ -93,7 +93,7 @@ function experiments(name, num, initsize, k)
             L, Ly = X_train[1:initsize,:], y_train[1:initsize];
             U, Uy = X_train, y_train;
 
-            performance[foldindex, :] = varianceReduction(L, Ly, U, Uy, num, U, Uy);
+            performance[foldindex, :] = VarianceReduction(L, Ly, U, Uy, num, U, Uy);
             foldindex += 1;
         end
 
