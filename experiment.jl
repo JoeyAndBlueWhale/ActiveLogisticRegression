@@ -1,5 +1,6 @@
 using Convex, LinearAlgebra, Mosek, MosekTools, Random
 using ScikitLearn
+using StatsBase
 using DelimitedFiles
 using StatsBase: sample
 using ScikitLearn.CrossValidation: KFold
@@ -47,7 +48,6 @@ function VarianceReduction(L, Ly, U, Uy, num, X_test, y_test)
     w = vec(classifier.coef_);
 
     gamma = sdpsolver(U, w, num);
-    println(gamma);
     n = size(U)[1];
     uniform = ones(n)/n;
     alpha = 1 - num^(-1/6);
