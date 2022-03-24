@@ -79,7 +79,7 @@ function experiments(name, num, initsize, k)
         performance = VarianceReduction(L, Ly, X, y, num, X, y);
         return performance
     else
-        kf = KFold(size(X)[1], n_folds=k, shuffle=True);
+        kf = KFold(size(X)[1], n_folds=k, shuffle=true);
         performance = zeros(k, 2);
         foldindex = 1;
 
