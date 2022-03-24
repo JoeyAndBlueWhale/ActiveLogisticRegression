@@ -1,6 +1,6 @@
 using Convex, LinearAlgebra, Mosek, MosekTools, Random
 using ScikitLearn
-using StatsBase
+using StatsBase, Statistics
 using DelimitedFiles
 using StatsBase: sample
 using ScikitLearn.CrossValidation: KFold
@@ -8,7 +8,6 @@ const MOI = Convex.MOI
 @sk_import linear_model: LogisticRegression
 
 function sdpsolver(U, w, num)
-    U = U/200.
     println("Number of samples ", num);
     n = size(U)[1];
     println("Number of data ", n);
@@ -72,6 +71,8 @@ function experiments(name, num, initsize, k)
     y = X[:,m];
     y = y * 2 .- 1;
     X = X[:,1:m-1];
+    X = X .- mean(X, dims=1);
+    X = X ./ std(X, dims=1);
 
     if k == 1
         L = X[1:initsize,:];
