@@ -53,7 +53,7 @@ function VarianceReduction(L, Ly, U, Uy, num, X_test, y_test)
     alpha = 1 - num^(-1/6);
     gamma = alpha*gamma+(1-alpha)*uniform;
 
-    index = sample(1:n, Weights(gamma), num);
+    index = sample(1:n, Weights(vec(gamma)), num);
     data = U[index,:];
     label = Uy[index];
 
