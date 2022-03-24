@@ -102,5 +102,5 @@ function experiments(name, num, initsize, k)
     end
 end
 
-performance = experiments("australian.dat", 600, 300, 10);
+performance = experiments("australian.dat", 100, 30, 10);
 println(performance);
