@@ -8,7 +8,7 @@ const MOI = Convex.MOI
 @sk_import linear_model: LogisticRegression
 
 function sdpsolver(U, w, num)
-    U = U/100.
+    U = U/200.
     println("Number of samples ", num);
     n = size(U)[1];
     println("Number of data ", n);
