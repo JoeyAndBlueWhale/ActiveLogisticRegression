@@ -88,7 +88,7 @@ def experimentsbatch(name, num, initsize, k):
         L, Ly = X_train[:initsize,:], y_train[:initsize]
         U, Uy = X_train, y_train
         
-        performance[0, foldindex, :] = varianceReduction(L, Ly, U, Uy, num, U, Uy)
+        #performance[0, foldindex, :] = varianceReduction(L, Ly, U, Uy, num, U, Uy)
         performance[1, foldindex, :] = uniformrandom(L, Ly, U, Uy, num, U, Uy)
         
         foldindex += 1
@@ -109,6 +109,7 @@ def graphplotter(performance):
     
 
     
-#performance = experimentsbatch("australian.dat", 50, 30, 2)
-performance = experiments('', 2800, 4, 1, 0.01)
-graphplotter(performance)
+performance = experimentsbatch("australian.dat", 600, 30, 10)
+print(performance)
+#performance = experiments('', 2800, 4, 1, 0.01)
+#graphplotter(performance)
