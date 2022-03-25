@@ -43,7 +43,7 @@ def maxentropy(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
     return performance
 
 def maxerrorreduction(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
-    classifier = SGDClassifier(loss='log', alpha=lammy, n_jobs=-1)
+    classifier = SGDClassifier(loss='log', alpha=lammy, n_jobs=-1, warm_start=True)
     classifier.fit(L, Ly)
     performance = np.zeros(maxiter+1)
     pred = classifier.predict(X_test)
@@ -54,20 +54,22 @@ def maxerrorreduction(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
     for j in range(maxiter):
         errorreduction = np.zeros(len(U))
         for i in range(len(U)):
+            temp1 = classifier
+            temp2 = classifier
             Lplus = np.insert(L, 0, U[i], axis=0)
             Lyplus1 = np.insert(Ly, 0, 1)
             Lyplus2 = np.insert(Ly, 0, -1)
             
-            classifier.fit(Lplus, Lyplus1)
-            prob = classifier.predict_proba(U)
+            temp1.fit(Lplus, Lyplus1)
+            prob = temp1.predict_proba(U)
             prob = prob[:,0]
             prob2 = 1-prob
             entropy1 = np.multiply(prob2, np.log(prob2))+np.multiply(prob, np.log(prob))
             entropy1 = -1*entropy1
             entropy1 = np.sum(entropy1)
             
-            classifier.fit(Lplus, Lyplus2)
-            prob = classifier.predict_proba(U)
+            temp2.fit(Lplus, Lyplus2)
+            prob = temp2.predict_proba(U)
             prob = prob[:,0]
             prob2 = 1-prob
             entropy2 = np.multiply(prob2, np.log(prob2))+np.multiply(prob, np.log(prob))
@@ -94,7 +96,7 @@ def maxerrorreduction(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
     return performance
 
 def minlossincrease(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
-    classifier = SGDClassifier(loss='log', alpha=lammy, n_jobs=-1)
+    classifier = SGDClassifier(loss='log', alpha=lammy, n_jobs=-1, warm_start=True)
     classifier.fit(L, Ly)
     performance = np.zeros(maxiter+1)
     pred = classifier.predict(X_test)
@@ -109,15 +111,16 @@ def minlossincrease(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
             Lyplus1 = np.insert(Ly, 0, 1)
             Lyplus2 = np.insert(Ly, 0, -1)
             
-            classifier.fit(Lplus, Lyplus1)
-            w = classifier.coef_.flatten()
+            temp1 = classifier
+            temp1.fit(Lplus, Lyplus1)
+            w = temp1.coef_.flatten()
             loss1 = np.log(1+np.exp(-1*np.multiply(np.dot(Lplus,w), Lyplus1)))
             loss1 = np.sum(loss1)
             loss1 = lammy/2*norm(w,2)**2+loss1
             
-            
-            classifier.fit(Lplus, Lyplus2)
-            w = classifier.coef_.flatten()
+            temp2 = classifier
+            temp2.fit(Lplus, Lyplus2)
+            w = temp2.coef_.flatten()
             loss2 = np.log(1+np.exp(-1*np.multiply(np.dot(Lplus,w), Lyplus2)))
             loss2 = np.sum(loss2)
             loss2 = lammy/2*norm(w,2)**2+loss2
