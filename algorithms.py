@@ -16,7 +16,7 @@ import random
 from numpy.linalg import norm 
 
 def maxentropy(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
-    classifier = SGDClassifier(loss='log', alpha=lammy, n_jobs=-1)
+    classifier = SGDClassifier(loss='log', alpha=lammy, n_jobs=-1, warm_start=True)
     classifier.fit(L, Ly)
     performance = np.zeros(maxiter+1)
     pred = classifier.predict(X_test)
@@ -145,7 +145,7 @@ def minlossincrease(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
     return performance
 
 def maxmodelchange(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
-    classifier = SGDClassifier(loss='log', alpha=lammy, n_jobs=-1)
+    classifier = SGDClassifier(loss='log', alpha=lammy, n_jobs=-1, warm_start=True)
     classifier.fit(L, Ly)
     performance = np.zeros(maxiter+1)
     pred = classifier.predict(X_test)
