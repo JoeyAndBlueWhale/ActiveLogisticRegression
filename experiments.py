@@ -49,7 +49,7 @@ def experiments(name, maxiter, initsize, k, lammy, batch):
     else:
         
         kf = KFold(n_splits=k, shuffle=True)
-        performance = np.zeros([4, k, maxiter+1])
+        performance = np.zeros([5, k, maxiter+1])
         foldindex = 0
     
         for train_index , test_index in kf.split(X):
