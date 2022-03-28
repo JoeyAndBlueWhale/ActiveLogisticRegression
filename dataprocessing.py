@@ -11,14 +11,14 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
 
 def importDataSet(name,method):
-    '''
+    
     X = np.genfromtxt(r'./dataset/'+name)
     y = X[:,-1]
     X = X[:,0:-1]
     y = (y == 1) * 2 - 1
     #y = y-3
-    '''
     
+    '''
     X = dataset.load_chess().to_numpy()
     y = X[:,-1]
     y = (y == 'won') * 2 - 1
@@ -42,6 +42,7 @@ def importDataSet(name,method):
     X_1 = np.append(X_1, one.fit_transform(encoded), axis=1)
     
     X = X_1
+    '''
     
     
     X -= np.mean(X, axis=0)

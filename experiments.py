@@ -17,12 +17,12 @@ from sklearn.model_selection import KFold
 from dataprocessing import importDataSet
 
 
-def experiments(name, maxiter, initsize, k, lammy):
+def experiments(name, maxiter, initsize, k, lammy, batch):
     
     X, y = importDataSet(name, "standardization")
     
     if k == 1 :
-        performance = np.zeros([4, maxiter+1])
+        performance = np.zeros([5, maxiter+1])
         
         X_train , X_test = X, X
         y_train , y_test = y, y
@@ -32,14 +32,16 @@ def experiments(name, maxiter, initsize, k, lammy):
         Ly = np.append(Ly, y_train[-1])
         U, Uy = X_train[initsize-1:-1,:], y_train[initsize-1:-1]
         
-        performance[0, :] = maxentropy(L, Ly, U, Uy, lammy, maxiter, X_test, y_test)
+        performance[0, :] = maxentropy(L, Ly, U, Uy, lammy, maxiter, X_test, y_test, batch)
         print("Max entropy finished!")
-        performance[1, :] = maxerrorreduction(L, Ly, U, Uy, lammy, maxiter, X_test, y_test)
+        performance[1, :] = maxerrorreduction(L, Ly, U, Uy, lammy, maxiter, X_test, y_test, batch)
         print("Max error reduction finished!")
-        performance[2, :] = minlossincrease(L, Ly, U, Uy, lammy, maxiter, X_test, y_test)
+        performance[2, :] = minlossincrease(L, Ly, U, Uy, lammy, maxiter, X_test, y_test, batch)
         print("Min loss increase finished!")
-        performance[3, :] = maxmodelchange(L, Ly, U, Uy, lammy, maxiter, X_test, y_test)
+        performance[3, :] = maxmodelchange(L, Ly, U, Uy, lammy, maxiter, X_test, y_test, batch)
         print("Max model change finished!")
+        performance[4, :] = uniformrandom(L, Ly, U, Uy, lammy, maxiter, X_test, y_test, batch)
+        print("Uniform sampling finished!")
         
         return performance
         
@@ -60,19 +62,22 @@ def experiments(name, maxiter, initsize, k, lammy):
             Ly = np.append(Ly, y_train[-1])
             U, Uy = X_train[initsize-1:-1,:], y_train[initsize-1:-1]
         
-            performance[0, foldindex, :] = maxentropy(L, Ly, U, Uy, lammy, maxiter, X_test, y_test)
+            performance[0, foldindex, :] = maxentropy(L, Ly, U, Uy, lammy, maxiter, X_test, y_test, batch)
             print("Max entropy finished!")
-            performance[1, foldindex, :] = maxerrorreduction(L, Ly, U, Uy, lammy, maxiter, X_test, y_test)
+            performance[1, foldindex, :] = maxerrorreduction(L, Ly, U, Uy, lammy, maxiter, X_test, y_test, batch)
             print("Max error reduction finished!")
-            performance[2, foldindex, :] = minlossincrease(L, Ly, U, Uy, lammy, maxiter, X_test, y_test)
+            performance[2, foldindex, :] = minlossincrease(L, Ly, U, Uy, lammy, maxiter, X_test, y_test, batch)
             print("Min loss increase finished!")
-            performance[3, foldindex, :] = maxmodelchange(L, Ly, U, Uy, lammy, maxiter, X_test, y_test)
+            performance[3, foldindex, :] = maxmodelchange(L, Ly, U, Uy, lammy, maxiter, X_test, y_test, batch)
             print("Max model change finished!")
+            performance[4, :] = uniformrandom(L, Ly, U, Uy, lammy, maxiter, X_test, y_test, batch)
+            print("Uniform sampling finished!")
         
             foldindex += 1
         
         return np.sum(performance, axis=1)/k
-
+    
+'''
 def experimentsbatch(name, num, initsize, k):
     
     X, y = importDataSet(name, "standardization")
@@ -94,6 +99,7 @@ def experimentsbatch(name, num, initsize, k):
         foldindex += 1
         
     return np.sum(performance, axis=1)/k
+'''
     
 
 def graphplotter(performance):
@@ -103,6 +109,7 @@ def graphplotter(performance):
     plt.plot(x, performance[1,:], label="Max error reduction")
     plt.plot(x, performance[2,:], label="Min loss increase")
     plt.plot(x, performance[3,:], label="Max model change")
+    plt.plot(x, performance[4,:], label="Uniform random")
     plt.legend()
     plt.savefig('plot')
     plt.show()
@@ -111,5 +118,5 @@ def graphplotter(performance):
     
 #performance = experimentsbatch("australian.dat", 100, 30, 10)
 #print(performance)
-performance = experiments('', 1500, 4, 1, 0.01)
+performance = experiments('australian.dat', 120, 4, 10, 0.01, 5)
 graphplotter(performance)

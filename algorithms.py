@@ -15,7 +15,7 @@ import mosek
 import random
 from numpy.linalg import norm 
 
-def maxentropy(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
+def maxentropy(L, Ly, U, Uy, lammy, maxiter, X_test, y_test, batch):
     classifier = SGDClassifier(loss='log', alpha=lammy, n_jobs=-1, warm_start=True)
     classifier.fit(L, Ly)
     performance = np.zeros(maxiter+1)
@@ -28,7 +28,7 @@ def maxentropy(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
         prob2 = 1-prob
         entropy = np.multiply(prob2, np.log(prob2))+np.multiply(prob, np.log(prob))
         entropy = -1*entropy
-        index = np.argmax(entropy)
+        index = np.argpartition(entropy, -batch)[-batch:]
         newdata = U[index,:]
         newlabel = Uy[index]
         L = np.insert(L, 0, newdata, axis=0)
@@ -42,7 +42,7 @@ def maxentropy(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
     
     return performance
 
-def maxerrorreduction(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
+def maxerrorreduction(L, Ly, U, Uy, lammy, maxiter, X_test, y_test, batch):
     classifier = SGDClassifier(loss='log', alpha=lammy, n_jobs=-1, warm_start=True)
     classifier.fit(L, Ly)
     performance = np.zeros(maxiter+1)
@@ -79,7 +79,7 @@ def maxerrorreduction(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
             errorreduction[i] = min(entropy1, entropy2)
         
             
-        index = np.argmin(errorreduction)
+        index = np.argpartition(errorreduction, batch)[:batch]
         newdata = U[index,:]
         newlabel = Uy[index]
         L = np.insert(L, 0, newdata, axis=0)
@@ -95,7 +95,7 @@ def maxerrorreduction(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
     
     return performance
 
-def minlossincrease(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
+def minlossincrease(L, Ly, U, Uy, lammy, maxiter, X_test, y_test, batch):
     classifier = SGDClassifier(loss='log', alpha=lammy, n_jobs=-1, warm_start=True)
     classifier.fit(L, Ly)
     performance = np.zeros(maxiter+1)
@@ -128,7 +128,7 @@ def minlossincrease(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
             lossincrease[i] = max(loss1, loss2)
         
             
-        index = np.argmin(lossincrease)
+        index = np.argpartition(lossincrease, batch)[:batch]
         newdata = U[index,:]
         newlabel = Uy[index]
         L = np.insert(L, 0, newdata, axis=0)
@@ -144,7 +144,7 @@ def minlossincrease(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
     
     return performance
 
-def maxmodelchange(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
+def maxmodelchange(L, Ly, U, Uy, lammy, maxiter, X_test, y_test, batch):
     classifier = SGDClassifier(loss='log', alpha=lammy, n_jobs=-1, warm_start=True)
     classifier.fit(L, Ly)
     performance = np.zeros(maxiter+1)
@@ -158,7 +158,29 @@ def maxmodelchange(L, Ly, U, Uy, lammy, maxiter, X_test, y_test):
         change = 2*np.multiply(change, norm(U, axis=1))
         
             
-        index = np.argmax(change)
+        index = np.argpartition(change, -batch)[-batch:]
+        newdata = U[index,:]
+        newlabel = Uy[index]
+        L = np.insert(L, 0, newdata, axis=0)
+        Ly = np.insert(Ly, 0, newlabel)
+        U = np.delete(U, index, axis=0)
+        Uy = np.delete(Uy, index)
+        classifier.fit(L, Ly)
+        
+        pred = classifier.predict(X_test)
+        performance[i+1] = np.sum(pred==y_test)/len(y_test)
+    
+    return performance
+
+def uniformrandom(L, Ly, U, Uy, lammy, maxiter, X_test, y_test, batch):
+    classifier = SGDClassifier(loss='log', alpha=lammy, n_jobs=-1, warm_start=True)
+    classifier.fit(L, Ly)
+    performance = np.zeros(maxiter+1)
+    pred = classifier.predict(X_test)
+    performance[0] = np.sum(pred==y_test)/len(y_test)
+    
+    for i in range(maxiter):        
+        index = np.random.randint(0, len(U), batch)
         newdata = U[index,:]
         newlabel = Uy[index]
         L = np.insert(L, 0, newdata, axis=0)
@@ -223,28 +245,6 @@ def varianceReduction(L, Ly, U, Uy, num, X_test, y_test):
     indexlist = np.array(range(len(U)))
     
     index = random.choices(indexlist, weights=gamma, k=num)
-    data = U[index,:]
-    label = Uy[index]
-    
-    classifier.fit(data, label)
-    
-    pred = classifier.predict(X_test)
-    performance[1] = np.sum(pred==y_test)/len(y_test)
-    print("accuracy: ", performance[1])
-    
-    return performance
-
-def uniformrandom(L, Ly, U, Uy, num, X_test, y_test):
-    classifier = LogisticRegression(penalty='none')
-    classifier.fit(L, Ly)
-    performance = np.zeros(2)
-    pred = classifier.predict(X_test)
-    performance[0] = np.sum(pred==y_test)/len(y_test)
-    print("accuracy: ", performance[0])  
-    
-    indexlist = np.array(range(len(U)))
-    
-    index = random.choices(indexlist, k=num)
     data = U[index,:]
     label = Uy[index]
     
