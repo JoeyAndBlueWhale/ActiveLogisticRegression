@@ -103,7 +103,7 @@ function graphplotter(name, initsize, increase, ite, k)
     x = collect(0:increase:ite*increase);
     y = zeros(ite+1);
     for i in increase:increase:increase*ite
-        y[i/increase+1] = experiments(name, i, initsize, k)[2];
+        y[Int(i/increase+1)] = experiments(name, i, initsize, k)[2];
     end
     plot(x, y, label = initsize);
     savefig(name*string(initsize));
