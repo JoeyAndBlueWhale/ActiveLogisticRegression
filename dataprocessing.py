@@ -10,14 +10,12 @@ import uci_dataset as dataset
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
 
-def importDataSet(name,method):
-    
-    X = np.genfromtxt(r'./dataset/'+name)
+def preprocessDataset(name):
+    '''
+    X = np.genfromtxt(r'./dataset/'+name+'.dat')
     y = X[:,-1]
     X = X[:,0:-1]
     y = (y == 1) * 2 - 1
-    #y = y-3
-    
     '''
     X = dataset.load_chess().to_numpy()
     y = X[:,-1]
@@ -42,17 +40,27 @@ def importDataSet(name,method):
     X_1 = np.append(X_1, one.fit_transform(encoded), axis=1)
     
     X = X_1
-    '''
     
     
     X -= np.mean(X, axis=0)
-    if method == "standardization":
-        X /= np.std(X, axis=0)
-    else:
-        mini = np.min(X, axis=0)
-        maxi = np.max(X, axis=0)
-        X /= maxi - mini
+    X /= np.std(X, axis=0)
+    
+    
+    final = np.append(X, y.reshape(-1,1), axis=1)
+    np.savetxt(r'./dataset/'+name+r'_processed.dat', final, delimiter=' ')
+    
+    
+    
+
+def importDataSet(name):
+    
+    X = np.genfromtxt(r'./dataset/'+name+r'_processed.dat')
+    y = X[:,-1]
+    X = X[:,0:-1]
+
     return X, y
+
+#preprocessDataset('chess')
 
          
 

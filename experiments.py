@@ -19,7 +19,7 @@ from dataprocessing import importDataSet
 
 def experiments(name, maxiter, initsize, k, lammy, batch):
     
-    X, y = importDataSet(name, "standardization")
+    X, y = importDataSet(name)
     
     if k == 1 :
         performance = np.zeros([5, maxiter+1])
@@ -118,5 +118,5 @@ def graphplotter(performance):
     
 #performance = experimentsbatch("australian.dat", 100, 30, 10)
 #print(performance)
-performance = experiments('australian.dat', 120, 4, 10, 0.01, 5)
+performance = experiments('chess', 300, 4, 1, 0.01, 5)
 graphplotter(performance)

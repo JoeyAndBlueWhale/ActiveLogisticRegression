@@ -1,4 +1,4 @@
-using Convex, LinearAlgebra, Mosek, MosekTools, Random
+using Convex, LinearAlgebra, Mosek, MosekTools, Random, Plots
 using ScikitLearn
 using StatsBase, Statistics
 using DelimitedFiles
@@ -66,7 +66,7 @@ function VarianceReduction(L, Ly, U, Uy, num, X_test, y_test)
 end
 
 function experiments(name, num, initsize, k)
-    X = readdlm("dataset/" * name,' ');
+    X = readdlm("dataset/" * name * "_processed.dat",' ');
     m = size(X)[2]
     y = X[:,m];
     y = y * 2 .- 1;
@@ -94,7 +94,7 @@ function experiments(name, num, initsize, k)
             L, Ly = X_train[1:initsize,:], y_train[1:initsize];
             U, Uy = X_train, y_train;
 
-            performance[foldindex, :] = VarianceReduction(L, Ly, U, Uy, num, U, Uy);
+            performance[foldindex, :] = VarianceReduction(L, Ly, U, Uy, num, X_test, y_test);
             foldindex += 1;
         end
 
@@ -102,5 +102,14 @@ function experiments(name, num, initsize, k)
     end
 end
 
-performance = experiments("australian.dat", 100, 300, 10);
-println(performance);
+function graphplotter(name, initsize, increase, ite, k)
+    x = collect(0:increase:ite*increase);
+    y = zeros(ite+1);
+    for i in increase:increase:increse*ite
+        y[i/increase+1] = experiments(name, i, initsize, k)[2];
+    end
+    plot(x, y, label = initsize);
+    savefig(name*string(initsize));
+end
+
+graphplotter("australian", 30, 100, 6, 10);
