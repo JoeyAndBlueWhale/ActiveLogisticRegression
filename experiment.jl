@@ -69,10 +69,7 @@ function experiments(name, num, initsize, k)
     X = readdlm("dataset/" * name * "_processed.dat",' ');
     m = size(X)[2]
     y = X[:,m];
-    y = y * 2 .- 1;
     X = X[:,1:m-1];
-    X = X .- mean(X, dims=1);
-    X = X ./ std(X, dims=1);
 
     if k == 1
         L = X[1:initsize,:];
